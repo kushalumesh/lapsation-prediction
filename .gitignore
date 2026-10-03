@@ -1,54 +1,25 @@
-# Python cache
+# Python
 __pycache__/
 *.py[cod]
-*$py.class
-*.so
-*.egg
 *.egg-info/
-dist/
-build/
 
-# Virtual environments
+# Environments and secrets
 venv/
-env/
 .venv/
 .env
+.streamlit/secrets.toml
 
-# Jupyter Notebook
+# Jupyter
 .ipynb_checkpoints/
-*.ipynb_checkpoints
 
-# IDE / editor files
+# Editors
 .vscode/
 .idea/
-*.swp
-*.swo
 
 # macOS
 .DS_Store
-.AppleDouble
-.LSOverride
 
-# Data files (never commit raw data to Git)
+# Data (regenerate with generate_data.py)
 data/
 *.parquet
 *.csv
-*.pkl
-*.joblib
-*.h5
-
-# Model artefacts
-models/
-*.model
-
-# Logs
-logs/
-*.log
-
-# Secrets / credentials
-.env.local
-*.pem
-credentials.json
-
-# Streamlit
-.streamlit/secrets.toml
