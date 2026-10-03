@@ -75,19 +75,14 @@ transparent 1px, transparent 84px);
 [data-testid="stHeader"] {{ background: transparent; }}
 #MainMenu, footer {{ visibility: hidden; }}
 
-html, body, .stMarkdown, .stApp {{
+html, body, [class*="st-"], .stMarkdown {{
 font-family: 'Inter', -apple-system, sans-serif;
 color: {INK};
-}}
-[data-testid="stIconMaterial"], .material-icons, .material-symbols-rounded,
-span[data-testid*="Icon"] {{
-font-family: 'Material Symbols Rounded', 'Material Icons' !important;
 }}
 .block-container {{ padding-top: 1.6rem; padding-bottom: 3rem; max-width: 1200px; }}
 
 [data-testid="stSidebar"] {{ background: {CARD}; border-right: 1px solid {LINE}; }}
-[data-testid="stSidebar"] label, [data-testid="stSidebar"] p,
-[data-testid="stSidebar"] span, [data-testid="stSidebar"] div {{ color: {INK}; }}
+[data-testid="stSidebar"] * {{ color: {INK}; }}
 [data-testid="stSidebar"] h2 {{
 font-family: 'Outfit', sans-serif; font-weight: 500;
 font-size: 0.82rem; letter-spacing: 0.04em; text-transform: none;
@@ -96,14 +91,11 @@ border-bottom: 1px solid {LINE};
 }}
 
 .stButton > button {{
-background: {INK}; border: none; border-radius: 10px;
+background: {INK}; color: {CANVAS};
+border: none; border-radius: 10px;
 padding: 0.7rem 1rem; font-weight: 500; font-size: 0.94rem;
 }}
-.stButton > button, .stButton > button *,
-[data-testid="stSidebar"] .stButton > button,
-[data-testid="stSidebar"] .stButton > button * {{ color: {CANVAS} !important; }}
-.stButton > button:hover {{ background: #000; }}
-.stButton > button:hover, .stButton > button:hover * {{ color: {AMBER} !important; }}
+.stButton > button:hover {{ background: #000; color: {AMBER}; }}
 .stButton > button:focus-visible {{ outline: 3px solid {AMBER}; outline-offset: 2px; }}
 
 /* Masthead */
