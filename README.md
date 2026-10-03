@@ -2,6 +2,8 @@
 
 Predicting which life insurance policyholders cancel cover early, explaining why, and pricing what each lapse costs the reinsurance programme. Logistic regression baseline, XGBoost, SHAP explanations, a fairness check, and a Streamlit app.
 
+### 🔗 [Open the live app](https://lapsation-prediction-i3ub8xvzkxsxfig2nfaz6v.streamlit.app/)
+
 ---
 
 ## The problem
