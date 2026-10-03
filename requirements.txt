@@ -7,3 +7,6 @@ shap>=0.44
 matplotlib>=3.7
 seaborn>=0.13
 streamlit>=1.30
+jupyter
+ipykernel
+duckdb>=0.10

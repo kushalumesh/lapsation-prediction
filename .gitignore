@@ -23,3 +23,5 @@ venv/
 data/
 *.parquet
 *.csv
+*.duckdb
+*.duckdb
