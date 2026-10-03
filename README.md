@@ -1,106 +1,99 @@
-# Lapsation Prediction — Life Insurance Policyholder Retention Modelling
+# Lapsation Prediction: Life Insurance Policyholder Retention
 
-End-to-end machine learning project predicting which life insurance policyholders will lapse their policies. Built with XGBoost, SHAP explainability, demographic fairness auditing, and deployed as an interactive Streamlit application.
-
-**🚀 Live Demo:** *coming soon (Streamlit Cloud deployment)*
+Predicting which life insurance policyholders will cancel their cover early, and explaining why. Logistic regression baseline, XGBoost, SHAP explanations, a fairness check, and a Streamlit app.
 
 ---
 
-## Business Problem
+## The problem
 
-Life insurance companies lose significant revenue when policyholders cancel coverage before natural policy expiry — a phenomenon called **lapsation**. Predicting which policyholders are at highest risk of lapsing in the coming months allows insurers to prioritise retention outreach and preserve premium revenue.
+Life insurers lose future premium revenue every time a policyholder cancels before their policy naturally ends. This is called **lapsation**. If an insurer can identify who is likely to lapse, it can contact those customers before they leave.
 
-This project builds a lapsation prediction model on a portfolio of 100,000 synthetic policyholder records parameterised from APRA's 2024 Life Insurance Quarterly Statistics — the official regulatory dataset covering the Australian life insurance industry.
+The catch is that lapsation is rare. Only about 8% of policies lapse in a given year, so a model that simply predicts "nobody will lapse" is 92% accurate and completely useless. The real task is ranking policyholders by risk well enough to make a retention campaign worth running.
 
----
+## The data
 
-## Key Results
+100,000 synthetic policyholder records, parameterised from [APRA's 2024 Life Insurance Quarterly Statistics](https://www.apra.gov.au/life-insurance-quarterly-statistics). The overall lapse rate (8.3%) and the way lapse risk falls with policy age both match the published Australian figures.
 
-*Filled in as project progresses.*
+Synthetic data was used because real policyholder records are personal and confidential. Generating data to match published regulatory statistics keeps the modelling problem realistic without touching anyone's private information.
 
-| Metric | Baseline (Logistic Regression) | XGBoost |
+## Results
+
+Measured once on a held-out test set of 15,000 policyholders that was never used for training or tuning.
+
+| Model | AUC-ROC | PR-AUC |
 |---|---|---|
-| AUC-ROC | *tbd* | *tbd* |
-| Precision-Recall AUC | *tbd* | *tbd* |
-| Recall at 90% precision | *tbd* | *tbd* |
+| Logistic regression (baseline) | 0.650 | 0.144 |
+| **XGBoost** | **0.654** | **0.146** |
+| Random guessing | 0.500 | 0.083 |
 
-**Class imbalance:** ~91.7% non-lapse, ~8.3% lapse (matches APRA 2024 industry ratio)
+**Reading these numbers.** PR-AUC is the one that matters here. Random guessing gets 0.083, which is just the lapse rate. The model reaches 0.146, so roughly **1.75× better than chance** at concentrating real lapsers near the top of the ranking. In campaign terms: contacting people the model flags finds lapsers at nearly double the rate of contacting people at random.
 
----
+XGBoost only narrowly beats logistic regression. That is a real result, not a disappointing one. It says the relationships in this data are mostly captured by a linear model, and the extra complexity buys very little. Reporting that honestly is more useful than tuning until the gap looks impressive.
 
-## Methodology
+## What drives lapsation
 
-Follows the **CRISP-DM** framework:
+From the exploratory analysis and confirmed by the model:
 
-1. **Business Understanding** — Framed as binary classification with heavy class imbalance
-2. **Data Preparation** — Synthetic dataset parameterised from APRA 2024 statistics
-3. **Exploratory Data Analysis** — Feature distributions, missingness patterns, class imbalance
-4. **Modelling** — Logistic regression baseline vs XGBoost
-5. **Evaluation** — AUC-ROC, PR-AUC, calibration, confusion matrix on held-out test set
-6. **Explainability** — SHAP values (global and local)
-7. **Fairness Audit** — Performance across age bands
-8. **Deployment** — Streamlit application
+- **Policy tenure dominates.** Lapse risk is about 14% in year one and falls to around 4% by year seven.
+- **Underwriting loading increases risk.** Policyholders charged a premium loading are more likely to leave.
+- **Product type matters.** Income protection lapses most; trauma cover least.
+- **Younger policyholders lapse more** than older ones.
+- **Prior claimants are stickier.** People who have claimed tend to stay.
 
----
+## Approach
 
-## Tech Stack
+1. **Data generation** — synthetic policyholders calibrated to APRA statistics
+2. **Exploratory analysis** — distributions, missing data, class imbalance, lapse drivers
+3. **Baseline** — logistic regression with balanced class weights
+4. **Main model** — XGBoost, four configurations compared on validation
+5. **Evaluation** — AUC-ROC and PR-AUC, with a decision threshold tuned on validation and the test set used exactly once
+6. **Explainability** — SHAP values, globally and per individual
+7. **Fairness** — performance compared across age bands
+8. **Deployment** — Streamlit app
 
-- **Python 3.11**
-- **pandas, numpy** — data manipulation
-- **scikit-learn** — logistic regression, evaluation metrics
-- **XGBoost** — gradient-boosted tree model
-- **SHAP** — model explainability
-- **Streamlit** — interactive deployment
-- **matplotlib, seaborn** — visualisation
-- **Jupyter** — exploratory analysis
+Preprocessing sits inside a scikit-learn `Pipeline`, so imputation and scaling are fitted on training data only. The test set is touched a single time, at the very end.
 
----
+## Project structure
 
-## Project Structure
+```
 lapsation-prediction/
-├── data/ # Generated data (gitignored)
-├── notebooks/ # Jupyter notebooks for EDA and modelling
-├── src/ # Python modules
-├── models/ # Trained model artefacts (gitignored)
-├── app.py # Streamlit application
-├── generate_data.py # Synthetic data generator
-├── requirements.txt # Package dependencies
-└── README.md
+├── notebooks/
+│   ├── 01_eda.ipynb              # Exploratory data analysis
+│   ├── 02_baseline_model.ipynb   # Logistic regression
+│   ├── 03_xgboost_model.ipynb    # XGBoost, test evaluation, fairness
+│   └── 04_explainability.ipynb   # SHAP
+├── figures/                      # 20 charts produced by the notebooks
+├── results/                      # Metrics as JSON
+├── app.py                        # Streamlit app
+├── generate_data.py              # Synthetic data generator
+└── requirements.txt
+```
 
-
----
-
-## How to Reproduce
+## Run it yourself
 
 ```bash
-# Clone the repository
 git clone https://github.com/kushalumesh/lapsation-prediction.git
 cd lapsation-prediction
 
-# Create environment
 conda create -n lapsation python=3.11 -y
 conda activate lapsation
 pip install -r requirements.txt
 
-# Generate synthetic data
 python generate_data.py
+```
 
-# Run the Streamlit app
+Then run the notebooks in order (01 → 04), and launch the app:
+
+```bash
 streamlit run app.py
 ```
 
----
+## Tech stack
+
+Python · pandas · NumPy · scikit-learn · XGBoost · SHAP · matplotlib · seaborn · Streamlit
 
 ## Author
 
 **Kushal Umesh** — Master of Data Science, University of Queensland
-Data Science Intern, Wipro (Resolution Life Australia account)
 
-- [LinkedIn](https://linkedin.com/in/kushalumesh)
-- [GitHub](https://github.com/kushalumesh)
-
----
-
-## Acknowledgements
-
-Data parameters derived from the [APRA Life Insurance Quarterly Statistics (2024)](https://www.apra.gov.au/life-insurance-quarterly-statistics). Project developed during an internship at Wipro on the Resolution Life Australia account with mentorship from Pavan Kondapalli (industry supervisor) and Alan Huang (academic supervisor, University of Queensland).
+[GitHub](https://github.com/kushalumesh)

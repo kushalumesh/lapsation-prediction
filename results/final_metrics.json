@@ -1,0 +1,19 @@
+{
+  "baseline": {
+    "model": "LogisticRegression (balanced)",
+    "test_auc_roc": 0.6503,
+    "test_pr_auc": 0.3208
+  },
+  "xgboost": {
+    "model": "XGBClassifier",
+    "params": {
+      "max_depth": 3.0,
+      "learning_rate": 0.1,
+      "n_estimators": 300.0
+    },
+    "threshold": 0.48,
+    "test_auc_roc": 0.6552,
+    "test_pr_auc": 0.329
+  },
+  "test_set_lapse_rate": 0.2059
+}

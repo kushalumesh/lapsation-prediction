@@ -1,0 +1,9 @@
+{
+  "model": "LogisticRegression (class_weight=balanced)",
+  "val_auc_roc": 0.6471,
+  "val_pr_auc": 0.3138,
+  "best_threshold": 0.48,
+  "val_precision_at_best": 0.2702,
+  "val_recall_at_best": 0.7148,
+  "val_f1_at_best": 0.3922
+}
