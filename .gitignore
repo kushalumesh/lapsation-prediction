@@ -25,3 +25,4 @@ data/
 *.csv
 *.duckdb
 *.duckdb
+sql/results.txt
